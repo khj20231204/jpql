@@ -5,6 +5,7 @@
 package myjpql;
 
 import java.util.List;
+import java.util.Set;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
@@ -26,24 +27,68 @@ public class Jpql {
 
         try {
 
-            Address address = new Address("city", "street", "1000");
-                    
-            Member member1 = new Member();
-            member1.setUsername("member1");
-            member1.setAddress(address);
+            Member2 m2 = new Member2();
+            m2.setUsername("member1");
+            m2.setHomeAddress(new Address("city", "street", "zipcode"));
             
-            Address copyAddress = new Address(address.getCity(), address.getStreet(), address.getZipcode());
+            //collection에 입력
+            m2.getFavoriteFoods().add("치킨");
+            m2.getFavoriteFoods().add("피자");
+            m2.getFavoriteFoods().add("족발");
 
-            Member member2 = new Member();
-            member2.setUsername("member2");
-            member2.setAddress(copyAddress);
-                    
-            member2.getAddress().setCity("no city");
+            m2.getAddressHistory().add(new Address("old1", "street1", "zipcode1"));
+            m2.getAddressHistory().add(new Address("old2", "street2", "zipcode2"));
 
-            System.out.println("-------------------"+member1.getAddress().getCity());
+            em.persist(m2);
 
-            em.persist(member1);
-            em.persist(member2);
+            em.flush();
+            em.clear();
+
+            System.out.println("=========== 값 조회 ============");
+            Member2 findMember = em.find(Member2.class, m2.getId());
+
+            List<Address> addressHistory = findMember.getAddressHistory();
+            for(Address a : addressHistory){
+                System.out.println(a.getCity());
+            }
+
+            Set<String> favoriteFoods = findMember.getFavoriteFoods();
+            for(String s : favoriteFoods){
+                System.out.println(s);
+            }
+
+            System.out.println("=========== 값 수정 ============");
+
+            //homeAddress의 값을 수정할 때 이렇게 하면 될 것 같지만 이렇게 하면 안 된다.
+            //findMember.getHomeAddress().setCity("home city");
+            //값 타입의 수정은 완전히 새로운 객체를 생성해서 넣어줘야 한다.
+            //왜? 값 타입과 객체 타입-
+            findMember.setHomeAddress(new Address("home city", "home street", "home zipcode"));
+            //city를 하나만 바꿀려고 해도 이렇게 전체적으로 객체를 생성해서 바꿔줘야한다.
+            /* update쿼리문이 생성된다
+            결과 값:
+            Hibernate: 
+                update Member2 
+                set
+                city=?,
+                street=?,
+                zipcode=?,
+                username=? 
+            where
+                id=?
+             */
+
+            //기본타입 컬렉션의 변경 : 치킨 -> 짜장면으로 바꿔라
+            findMember.getFavoriteFoods().remove("치킨"); //삭제 후
+            findMember.getFavoriteFoods().add("짜장면"); //새로 입력
+            //String인 값 타입은 update가 없다. 완전 삭제 후 다시 넣어야한다.
+
+            //임베디드타입 컬렉션의 변경 : city에서 old1 -> ol2로 변경하라
+            findMember.getAddressHistory().
+            
+
+
+
 
             tx.commit();
         }catch (Exception e){
@@ -67,7 +112,7 @@ public class Jpql {
 
             Member member = new Member();
             member.setUsername("member1");
-            member.setAddress(new Address("city", "street", "zipcode"));
+            member.setHomeAddress(new Address("city", "street", "zipcode"));
             member.setPeriod(new Period());
             member.setAge(10);
 

@@ -13,25 +13,16 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
 
 @Entity
-public class Member {
+public class Member2 {
    
    @Id @GeneratedValue
    private Long id;
    private String username;
-   private int age;
-
-   @ManyToOne
-   @JoinColumn(name="TEAM_ID")
-   private Team team;
 
    @Embedded
-   private Period period;
-
-   @Embedded
-   private Address homeAddress;
+   private Address homeAddress; 
 
    @ElementCollection  //맵핑
    @CollectionTable(name = "FAVORITE_FOOD", joinColumns = @JoinColumn(name = "MEMBER_ID"))  //테이블명 지정
@@ -50,46 +41,6 @@ public class Member {
       this.id = id;
    }
 
-   public String getUsername() {
-      return username;
-   }
-
-   public void setUsername(String username) {
-      this.username = username;
-   }
-
-   public int getAge() {
-      return age;
-   }
-
-   public void setAge(int age) {
-      this.age = age;
-   }
-
-   public Team getTeam() {
-      return team;
-   }
-
-   public void setTeam(Team team) {
-      this.team = team;
-   }
-
-   public Period getPeriod() {
-      return period;
-   }
-
-   public void setPeriod(Period period) {
-      this.period = period;
-   }
-
-   public Address getHomeAddress() {
-      return homeAddress;
-   }
-
-   public void setHomeAddress(Address homeAddress) {
-      this.homeAddress = homeAddress;
-   }
-
    public Set<String> getFavoriteFoods() {
       return favoriteFoods;
    }
@@ -106,7 +57,21 @@ public class Member {
       this.addressHistory = addressHistory;
    }
 
-   
-   
+   public String getUsername() {
+      return username;
+   }
+
+   public void setUsername(String username) {
+      this.username = username;
+   }
+
+   public Address getHomeAddress() {
+      return homeAddress;
+   }
+
+   public void setHomeAddress(Address homeAddress) {
+      this.homeAddress = homeAddress;
+   }
+
    
 }
