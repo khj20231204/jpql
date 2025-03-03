@@ -36,8 +36,10 @@ public class Jpql {
             m2.getFavoriteFoods().add("피자");
             m2.getFavoriteFoods().add("족발");
 
-            m2.getAddressHistory().add(new Address("old1", "street1", "zipcode1"));
-            m2.getAddressHistory().add(new Address("old2", "street2", "zipcode2"));
+            //m2.getAddressHistory().add(new Address("old1", "street1", "zipcode1"));
+            //m2.getAddressHistory().add(new Address("old2", "street2", "zipcode2"));
+            m2.getAddressHistory().add(new AddressEntity(new Address("old1", "street1", "zipcode1")));
+            m2.getAddressHistory().add(new AddressEntity(new Address("old2", "street2", "zipcode2")));
 
             em.persist(m2);
 
@@ -47,10 +49,10 @@ public class Jpql {
             System.out.println("=========== 값 조회 ============");
             Member2 findMember = em.find(Member2.class, m2.getId());
 
-            List<Address> addressHistory = findMember.getAddressHistory();
-            for(Address a : addressHistory){
+            /* List<AddressEntity> addressHistory = findMember.getAddressHistory();
+            for(AddressEntity a : addressHistory){
                 System.out.println(a.getCity());
-            }
+            } */
 
             Set<String> favoriteFoods = findMember.getFavoriteFoods();
             for(String s : favoriteFoods){
@@ -83,12 +85,10 @@ public class Jpql {
             findMember.getFavoriteFoods().add("짜장면"); //새로 입력
             //String인 값 타입은 update가 없다. 완전 삭제 후 다시 넣어야한다.
 
-            //임베디드타입 컬렉션의 변경 : city에서 old1 -> ol2로 변경하라
-            findMember.getAddressHistory().
+            //임베디드타입 컬렉션의 변경 : city에서 old1 -> new1로 변경하라
+            //findMember.getAddressHistory().remove(new Address("old1", "street1", "zipcode1"));
+            //findMember.getAddressHistory().add(new Address("new1", "street1", "zipcode1"));
             
-
-
-
 
             tx.commit();
         }catch (Exception e){
