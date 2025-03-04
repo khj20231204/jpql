@@ -89,6 +89,53 @@ public class Jpql {
             //findMember.getAddressHistory().remove(new Address("old1", "street1", "zipcode1"));
             //findMember.getAddressHistory().add(new Address("new1", "street1", "zipcode1"));
             
+            Member2 member3 = new Member2();
+            member3.setUsername("member3");
+            member3.setType(MemberType.ADMIN);
+            
+            em.persist(member3);
+
+            em.flush();
+            em.clear();
+
+            System.out.println("==================== enum type =======================");
+
+            /* String query4 = "select m.username, 'HELLO', true from Member2 m " +
+            "where m.type = myjpql.MemberType.ADMIN";
+                        
+            List<Object[]> result8 = em.createQuery(query4).getResultList();*/
+
+            String query4 = "select m.username, 'HELLO', true from Member2 m " +
+            "where m.type = :userType";
+                        
+            List<Object[]> result8 = em.createQuery(query4)
+                    .setParameter("userType", MemberType.ADMIN)
+                    .getResultList();
+
+            for(Object[] o  : result8){
+                System.out.println("Object[0]:"+ o[0]);
+                System.out.println("Object[0]:"+ o[1]);
+                System.out.println("Object[0]:"+ o[2]);
+            }
+
+            Member member4 = new Member();
+            member4.setUsername("member4");
+            member4.setAge(23);
+
+            em.persist(member4);
+
+            String query5 = "select "
+            + " case when m.age <= 10 then '학생요금'"
+            + "      when m.age >=60 then '경로요금'"
+            + "      else '일반요금'"
+            + " end"
+            + " from Member m";
+
+            List<String> resultList2 = em.createQuery(query5, String.class).getResultList();
+
+            for(String s : resultList2){
+                System.out.println(s);
+            }
 
             tx.commit();
         }catch (Exception e){
@@ -206,9 +253,8 @@ public class Jpql {
 
             List<Member> result7 = em.createQuery("select m from Member m left join Team t on m.username = t.name").getResultList();
 
-            System.out.println(result7.size());
-
-
+            System.out.println(result7.size());          
+            
             tx.commit();
 
         }catch (Exception e){
@@ -221,3 +267,4 @@ public class Jpql {
     }
 
 }
+

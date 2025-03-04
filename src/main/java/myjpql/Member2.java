@@ -11,6 +11,8 @@ import jakarta.persistence.Column;
 import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
@@ -40,6 +42,11 @@ public class Member2 {
    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
    @JoinColumn(name = "MEMBER_ID")
    private List<AddressEntity> addressHistory = new ArrayList<>();
+
+   @Enumerated(EnumType.STRING)
+   private MemberType type;
+
+
    public Long getId() {
       return id;
    }
@@ -78,6 +85,14 @@ public class Member2 {
 
    public void setHomeAddress(Address homeAddress) {
       this.homeAddress = homeAddress;
+   }
+
+   public MemberType getType() {
+      return type;
+   }
+
+   public void setType(MemberType type) {
+      this.type = type;
    }
 
    
